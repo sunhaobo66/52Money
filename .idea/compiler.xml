@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="52Money_AdminService" />
+        <module name="52Money_AdminWeb" />
+        <module name="52Money_AutoCreate" />
+        <module name="52Money_Core" />
+        <module name="52Money_Domain" />
+        <module name="52Money_Mapper" />
+        <module name="52Money_MoneyController" />
+        <module name="52Money_Provider" />
+        <module name="52Money_Service" />
+        <module name="52Money_SSOController" />
+        <module name="52Money_SSOService" />
+        <module name="52Money_SSOServiceProvider" />
+        <module name="52Money_Study" />
+        <module name="52Money_UiController" />
+        <module name="52Money_UIWeb" />
+        <module name="SSO_Sys1" />
+        <module name="SSO_Sys2" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hao.mapper.admin.SysMenuMapper">
+    <resultMap id="rm" type="com.hao.domain.admin.SysMenu">
+        <id column="menu_id" property="menuId" jdbcType="BIGINT"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="perms" property="perms" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="icon" property="icon" jdbcType="VARCHAR"/>
+        <result column="order_num" property="orderNum" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="bcl">
+        menu_id, parent_id, name, url, perms, type, icon, order_num
+    </sql>
+    <insert id="insert" parameterType="com.hao.domain.admin.SysMenu">
+        insert into sys_menu (menu_id, parent_id, name, url, perms, type, icon, order_num)
+        values (#{menuId,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
+        #{url,jdbcType=VARCHAR}, #{perms,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{icon,jdbcType=VARCHAR},
+        #{orderNum,jdbcType=INTEGER})
+    </insert>
+    <select id="selectByPrimaryKey" resultMap="rm" parameterType="java.lang.Long">
+        select <include refid="bcl"/>
+        from sys_menu  where menu_id = #{menuId}
+    </select>
+    <update id="updateByPrimaryKey" parameterType="com.hao.domain.admin.SysMenu">
+        update sys_menu
+        set parent_id = #{parentId,jdbcType=BIGINT},
+        name = #{name,jdbcType=VARCHAR},
+        url = #{url,jdbcType=VARCHAR},
+        perms = #{perms,jdbcType=VARCHAR},
+        type = #{type,jdbcType=INTEGER},
+        icon = #{icon,jdbcType=VARCHAR},
+        order_num = #{orderNum,jdbcType=INTEGER}
+        where menu_id = #{menuId,jdbcType=BIGINT}
+    </update>
+
+    <select id="queryListAll" resultMap="rm">
+    select m.*,(select p.name from sys_menu p where p.menu_id = m.parent_id) as parentName
+    from sys_menu m order by m.order_num asc
+  </select>
+    <select id="queryByPage" resultMap="rm">
+    select * from sys_menu  order by order_num asc limit #{index},#{count}
+  </select>
+    <select id="queryCount" resultType="long" >
+    select COUNT(*) from sys_menu
+  </select>
+    <delete id="deleteBatch">
+        delete from sys_menu where menu_id in
+        <foreach item="menuId" collection="array" open="(" separator="," close=")">
+            #{menuId}
+        </foreach>
+        ;
+        delete from sys_role_menu where menu_id in
+        <foreach item="menuId" collection="array" open="(" separator="," close=")">
+            #{menuId}
+        </foreach>
+    </delete>
+    <select id="queryNotButtonList" resultMap="rm">
+        select * from sys_menu where type != 2 order by order_num asc
+    </select>
+    <select id="queryTopMenuList" resultMap="rm">
+        select * from sys_menu where parent_id= null order by orderNum asc
+    </select>
+    <select id="queryAllTop" resultMap="rm">
+       select * from sys_menu where parent_id is null order by order_num
+    </select>
+    <select id="queryUserTop" resultMap="rm" parameterType="java.util.List">
+        select * from sys_menu where parent_id is null and menu_id in
+         <foreach collection="list" open="(" close=")" separator="," item="mid">
+             #{mid}
+         </foreach>
+         order by order_num
+    </select>
+    <select id="queryUserMenuByParentId" resultMap="rm">
+        select * from sys_menu where parent_id = #{mid} and menu_id in
+         <foreach collection="mlist" item="id" open="(" close=")" separator=",">
+             #{id}
+         </foreach>
+         order by order_num
+    </select>
+    <select id="queryListParentId" resultMap="rm">
+        select * from sys_menu where parent_id = #{parentId} order by order_num
+    </select>
+    <!-- 查询用户的所有权限 -->
+    <select id="queryAllPerms" resultType="String">
+           SELECT m.perms  FROM sys_menu m  LEFT JOIN sys_role_menu rm
+         ON m.menu_id = rm.menu_id  LEFT JOIN sys_user_role ur
+          ON ur.role_id = rm.role_id  WHERE ur.user_id = #{userId}
+    </select>
+
+    <!-- 查询用户的所有菜单ID -->
+    <select id="queryAllMenuId" resultType="long">
+        select distinct rm.menu_id from sys_user_role ur
+        LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
+        where ur.user_id = #{userId}
+    </select>
+</mapper>

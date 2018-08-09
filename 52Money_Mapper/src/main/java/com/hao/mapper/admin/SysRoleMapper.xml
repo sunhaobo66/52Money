@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hao.mapper.admin.SysRoleMapper">
+    <resultMap id="BaseResultMap" type="com.hao.domain.admin.SysRole">
+        <id column="role_id" property="roleId" jdbcType="BIGINT"/>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        role_id, role_name, remark, create_user_id, create_time
+    </sql>
+    <insert id="insert" parameterType="com.hao.domain.admin.SysRole">
+        insert into sys_role (role_id, role_name, remark,
+        create_user_id, create_time)
+        values (#{roleId,jdbcType=BIGINT}, #{roleName,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+        #{createUserId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where role_id = #{roleId,jdbcType=BIGINT}
+    </select>
+    <update id="updateByPrimaryKey" parameterType="com.hao.domain.admin.SysRole">
+        update sys_role
+        set role_name = #{roleName,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        create_user_id = #{createUserId,jdbcType=BIGINT},
+        create_time = #{createTime,jdbcType=TIMESTAMP}
+        where role_id = #{roleId,jdbcType=BIGINT}
+    </update>
+
+    <select id="queryByPage" resultMap="BaseResultMap">
+        select * from sys_role  order by role_id asc  limit #{index}, #{count}
+    </select>
+
+    <select id="queryCount" resultType="long">
+        select count(*) from sys_role
+    </select>
+
+    <select id="queryAll" resultMap="BaseResultMap">
+        select * from sys_role
+    </select>
+
+    <select id="selectRoleNameList" resultType="String">
+        select role_name from sys_role r left join sys_user_role ur on ur.role_id=r.id where ur.user_id=#{userId}
+    </select>
+    <delete id="deleteBatch">
+        delete from sys_role where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        ;
+        delete from sys_role_menu where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        ;
+        delete from sys_user_role where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+</mapper>

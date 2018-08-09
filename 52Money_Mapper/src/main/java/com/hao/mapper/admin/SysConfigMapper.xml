@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hao.mapper.admin.SysConfigMapper">
+    <sql id="bcl">
+        id,key, remark, status, value
+    </sql>
+    <select id="selectByKeyPrefix" resultType="com.hao.domain.admin.SysConfig" >
+       SELECT * FROM sys_config where key like #{keyPrefix}
+    </select>
+    <insert id="insert" parameterType="com.hao.domain.admin.SysConfig">
+        INSERT INTO sys_config (`key`, `remark`, `status`, `value`) VALUES (#{key},#{remark},#{status},#{value}
+    </insert>
+    <select id="selectById" resultType="com.hao.domain.admin.SysConfig">
+        SELECT * FROM sys_config WHERE id=#{id}
+    </select>
+    <select id="selectByPage" resultType="com.hao.domain.admin.SysConfig">
+       SELECT * FROM sys_config limit #{index},#{size}
+    </select>
+    <select id="selectCount" resultType="long">
+      SELECT Count(*) FROM sys_config
+    </select>
+
+    <update id="update" parameterType="com.hao.domain.admin.SysConfig">
+        update sys_config set remark=#{remark} where id==#{id}
+    </update>
+    <delete id="deleteBatch">
+        delete from sys_menu where id in 
+        <foreach collection="array" open="(" close=")" item="id" separator=",">
+            id
+        </foreach>
+    </delete>
+
+</mapper>
